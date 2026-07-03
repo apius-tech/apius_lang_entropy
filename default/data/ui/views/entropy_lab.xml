@@ -1,0 +1,86 @@
+<dashboard script="entropy_lab.js" version="1.1" hideEdit="true">
+  <label>Entropy lab</label>
+  <description>Explore entropy scores: maximum possible values, single strings, and batch scoring against every model in the app.</description>
+  <row>
+    <panel>
+      <title>1. Maximum possible entropy</title>
+      <html>
+        <style>
+          .lab-note { background: #f4f6f8; border-left: 3px solid #5c6bc0; padding: 8px 12px; margin: 8px 0 14px; }
+          .lab-field { margin: 10px 0; }
+          .lab-field label { font-weight: 600; margin-right: 8px; }
+          .lab-field input[type="text"], .lab-field input[type="number"] { padding: 4px 8px; width: 140px; }
+          .lab-scroll { max-height: 420px; overflow-y: auto; border: 1px solid #d5dbe0; display: inline-block; min-width: 320px; }
+          .lab-table { border-collapse: collapse; width: 100%; }
+          .lab-table th, .lab-table td { border-bottom: 1px solid #e3e7ea; padding: 3px 12px; text-align: left; font-family: monospace; }
+          .lab-table th { position: sticky; top: 0; background: #eceff1; font-family: inherit; }
+          .lab-err { color: #b0321c; font-weight: 600; }
+          .lab-stats { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0; }
+          .lab-stat-card { border: 1px solid #d5dbe0; border-radius: 4px; padding: 8px 14px; background: #fafbfc; }
+          .lab-stat-card .k { font-size: 11px; color: #6b7785; text-transform: uppercase; }
+          .lab-stat-card .v { font-family: monospace; font-size: 15px; font-weight: 700; }
+          .lab-model-block h4 { margin: 14px 0 4px; }
+          textarea#lab-single-input { width: 100%; max-width: 640px; height: 56px; font-family: monospace; }
+          .lab-muted { color: #6b7785; font-size: 12px; }
+          #lab-max-value { font-family: monospace; font-size: 34px; font-weight: 700; margin: 6px 0 2px; }
+          #lab-max-formula { font-family: monospace; color: #6b7785; }
+        </style>
+        <div class="lab-note">
+          The maximum score a string can get is <b>-log2(floor)</b> bits per
+          bigram: a string whose every bigram is unknown to the model (e.g. a
+          run of digits &#8212; bigram tables contain no digits, so the choice of
+          probability model is irrelevant) scores the floor probability on
+          every bigram. Because the score is normalized per bigram, this
+          maximum is the same for every string length &#8805; 2; strings shorter
+          than 2 characters contain no bigrams and get no score at all.
+        </div>
+        <div class="lab-field">
+          <label for="lab-max-floor">Floor:</label>
+          <input type="text" id="lab-max-floor" value="1e-7"/>
+          <button id="lab-max-btn" class="btn btn-primary">Compute</button>
+        </div>
+        <div id="lab-max-value">&#8212;</div>
+        <div id="lab-max-formula"></div>
+      </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>2. Score a single string</title>
+      <html>
+        <div class="lab-field">
+          <textarea id="lab-single-input" placeholder="e.g. niestowarzyszona or a3f9bb12.cdn77.net"></textarea>
+        </div>
+        <div class="lab-field">
+          <button id="lab-single-btn" class="btn btn-primary">Score against all models</button>
+          <span class="lab-muted">spaces, dots, commas and hyphens are stripped; input is lowercased</span>
+        </div>
+        <div id="lab-single-out"></div>
+      </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>3. Batch scoring from a file</title>
+      <html>
+        <div class="lab-field">
+          <label for="lab-batch-file">File with strings (one per line):</label>
+          <input type="file" id="lab-batch-file" accept=".txt,.csv,text/plain,text/csv"/>
+        </div>
+        <div class="lab-field">
+          <button id="lab-batch-btn" class="btn btn-primary">Score file</button>
+          <button id="lab-batch-csv" class="btn" style="display:none;">Download results as CSV</button>
+          <span class="lab-muted">up to 10 000 lines; every model in the lookups folder is used</span>
+        </div>
+        <div id="lab-batch-stats"></div>
+        <div id="lab-batch-info" class="lab-muted"></div>
+        <div class="lab-scroll" style="max-height: 420px; min-width: 60%;">
+          <table class="lab-table" id="lab-batch-table">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </html>
+    </panel>
+  </row>
+</dashboard>

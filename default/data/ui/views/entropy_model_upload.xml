@@ -1,0 +1,66 @@
+<dashboard script="entropy_upload.js" version="1.1" hideEdit="true">
+  <label>Upload bigram model</label>
+  <description>Convert a bigram frequency CSV into a conditional-probability model usable by the entropy command.</description>
+  <row>
+    <panel>
+      <html>
+        <style>
+          #ent-upload-card { max-width: 640px; padding: 8px 4px; }
+          #ent-upload-card .ent-field { margin-bottom: 14px; }
+          #ent-upload-card label { display: block; font-weight: 600; margin-bottom: 4px; }
+          #ent-upload-card .ent-hint { color: #6b7785; font-size: 12px; margin-top: 3px; }
+          #ent-upload-card input[type="text"] { width: 320px; padding: 5px 8px; }
+          #ent-submit { margin-top: 4px; }
+          #ent-result { margin-top: 16px; padding: 12px; border-radius: 4px; display: none; white-space: pre-wrap; font-family: monospace; }
+          #ent-result.ok { display: block; background: #eaf5ea; border: 1px solid #5cc05c; }
+          #ent-result.err { display: block; background: #fdeaea; border: 1px solid #d6563c; }
+        </style>
+        <div id="ent-upload-card">
+          <p>
+            Upload a CSV of <b>bigram frequencies</b> with a header row, e.g.:
+          </p>
+          <pre>bigram,count
+ie,1962799
+ni,1516329
+ow,1074274</pre>
+          <p>
+            The app groups counts by the first character, computes conditional
+            probabilities q(c2 | c1) and saves them as
+            <code>&lt;name&gt;_probabilities.csv</code> in this app's lookups
+            directory, ready for <code>| entropy field=... lookup=&lt;name&gt;_probabilities.csv</code>.
+          </p>
+          <div class="ent-field">
+            <label for="ent-name">Model name</label>
+            <input type="text" id="ent-name" placeholder="e.g. english_bigrams"/>
+            <div class="ent-hint">Letters, digits, "_" and "-" only. Output file: &lt;name&gt;_probabilities.csv</div>
+          </div>
+          <div class="ent-field">
+            <label for="ent-file">Frequency CSV</label>
+            <input type="file" id="ent-file" accept=".csv,text/csv"/>
+            <div class="ent-hint">Columns: bigram, count. Bigrams are lowercased; duplicate bigrams are summed.</div>
+          </div>
+          <button id="ent-submit" class="btn btn-primary">Create probability model</button>
+          <div id="ent-result"></div>
+        </div>
+      </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <html>
+        <h3>Using the model</h3>
+        <pre>index=dns
+| entropy field=query lookup=english_bigrams_probabilities.csv
+| where entropy &gt; 9
+| stats count by query, entropy
+| sort - entropy</pre>
+        <p>
+          Low score = looks like the modeled language. High score = random-looking
+          string (hashes, DGA domains, C2 masquerading as noise). Dots, hyphens,
+          commas and spaces are stripped before scoring, so full domain names can
+          be passed as-is.
+        </p>
+      </html>
+    </panel>
+  </row>
+</dashboard>

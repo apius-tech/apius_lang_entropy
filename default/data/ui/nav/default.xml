@@ -1,0 +1,5 @@
+<nav search_view="search">
+  <view name="entropy_model_upload" default="true"/>
+  <view name="entropy_lab"/>
+  <view name="search"/>
+</nav>
