@@ -82,7 +82,7 @@ def _stats(scores, too_short):
     out["median"] = statistics.median(scores)
     if len(scores) >= 2:
         out["stdev"] = statistics.stdev(scores)
-        out["p95"] = statistics.quantiles(scores, n=100)[94]
+        out["p95"] = statistics.quantiles(scores, n=100, method="inclusive")[94]
     return out
 
 

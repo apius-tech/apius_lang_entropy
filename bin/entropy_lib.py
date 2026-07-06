@@ -14,10 +14,10 @@ import re
 
 DEFAULT_FLOOR = 1e-7
 
-# Characters stripped before scoring: spaces, dots, commas, hyphens.
+# Characters stripped before scoring: spaces, dots, commas, hyphens, underscores.
 # Dots/hyphens make the command usable on domain names (C2 / DGA hunting)
 # without punctuation bigrams polluting the score.
-_STRIP_RE = re.compile(r"[ .,_\-]")
+_STRIP_RE = re.compile(r"[ _.,\-]")
 
 # Lookup names must be plain basenames - no path traversal.
 _SAFE_NAME_RE = re.compile(r"^[A-Za-z0-9_.\-]+$")

@@ -57,7 +57,7 @@ ow,1074274</pre>
         <p>
           Low score = looks like the modeled language. High score = random-looking
           string (hashes, DGA domains, C2 masquerading as noise). Dots, hyphens,
-          commas and spaces are stripped before scoring, so full domain names can
+          commas, spaces and underscores are stripped before scoring, so full domain names can
           be passed as-is.
         </p>
       </html>

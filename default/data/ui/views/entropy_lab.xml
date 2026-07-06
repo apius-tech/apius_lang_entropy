@@ -53,7 +53,7 @@
         </div>
         <div class="lab-field">
           <button id="lab-single-btn" class="btn btn-primary">Score against all models</button>
-          <span class="lab-muted">spaces, dots, commas and hyphens are stripped; input is lowercased</span>
+          <span class="lab-muted">spaces, dots, commas, hyphens and underscores are stripped; input is lowercased</span>
         </div>
         <div id="lab-single-out"></div>
       </html>
