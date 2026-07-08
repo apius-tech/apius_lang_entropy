@@ -52,7 +52,13 @@
           <textarea id="lab-single-input" placeholder="e.g. niestowarzyszona or a3f9bb12.cdn77.net"></textarea>
         </div>
         <div class="lab-field">
-          <button id="lab-single-btn" class="btn btn-primary">Score against all models</button>
+          <label for="lab-single-model">Model:</label>
+          <select id="lab-single-model">
+            <option value="*">* (all models)</option>
+          </select>
+        </div>
+        <div class="lab-field">
+          <button id="lab-single-btn" class="btn btn-primary">Score</button>
           <span class="lab-muted">spaces, dots, commas, hyphens and underscores are stripped; input is lowercased</span>
         </div>
         <div id="lab-single-out"></div>
@@ -68,6 +74,12 @@
           <input type="file" id="lab-batch-file" accept=".txt,.csv,text/plain,text/csv"/>
         </div>
         <div class="lab-field">
+          <label for="lab-batch-model">Model:</label>
+          <select id="lab-batch-model">
+            <option value="*">* (all models)</option>
+          </select>
+        </div>
+        <div class="lab-field">
           <label for="lab-batch-floor">Floor:</label>
           <input type="text" id="lab-batch-floor" placeholder="default: 1e-7"/>
           <span class="lab-muted">probability for bigrams unknown to the model; leave empty to use the default</span>
@@ -75,7 +87,7 @@
         <div class="lab-field">
           <button id="lab-batch-btn" class="btn btn-primary">Score file</button>
           <button id="lab-batch-csv" class="btn" style="display:none;">Download results as CSV</button>
-          <span class="lab-muted">up to 200 000 lines; every model in the lookups folder is used</span>
+          <span class="lab-muted">up to 200 000 lines; pick a model or * to score against every model in the lookups folder</span>
         </div>
         <div id="lab-batch-stats"></div>
         <div id="lab-batch-info" class="lab-muted"></div>

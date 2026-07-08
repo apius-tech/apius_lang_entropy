@@ -60,6 +60,30 @@ require([
         return (v === null || v === undefined) ? "\u2014" : v;
     }
 
+    /* ---------- model selectors (panels 2 & 3) ---------- */
+
+    function loadModelOptions() {
+        get({ action: "models" }).done(function (data) {
+            if (typeof data === "string") { data = JSON.parse(data); }
+            ["#lab-single-model", "#lab-batch-model"].forEach(function (sel) {
+                var $sel = $(sel);
+                var current = $sel.val();
+                $sel.find("option").not("[value='*']").remove();
+                (data.models || []).forEach(function (name) {
+                    $sel.append($("<option>").attr("value", name).text(name));
+                });
+                if (current && $sel.find("option[value='" + current + "']").length) {
+                    $sel.val(current);
+                }
+            });
+        });
+    }
+
+    function selectedLookups(sel) {
+        var v = ($(sel).val() || "*").trim();
+        return (v === "" || v === "*") ? null : [v];
+    }
+
     /* ---------- Section 1: maximum possible entropy ---------- */
 
     function loadMaxEntropy() {
@@ -86,7 +110,10 @@ require([
             out.append($("<p>").addClass("lab-err").text("Enter a string first."));
             return;
         }
-        post({ action: "score" }, { strings: [s] }).done(function (data) {
+        var singleBody = { strings: [s] };
+        var singleLookups = selectedLookups("#lab-single-model");
+        if (singleLookups) { singleBody.lookups = singleLookups; }
+        post({ action: "score" }, singleBody).done(function (data) {
             if (typeof data === "string") { data = JSON.parse(data); }
             var table = $("<table>").addClass("lab-table");
             table.append($("<thead>").append(
@@ -222,6 +249,8 @@ require([
                 return;
             }
             var body = { strings: strings };
+            var batchLookups = selectedLookups("#lab-batch-model");
+            if (batchLookups) { body.lookups = batchLookups; }
             var floorRaw = ($("#lab-batch-floor").val() || "").trim();
             if (floorRaw) {
                 var floorNum = Number(floorRaw);
@@ -276,6 +305,7 @@ require([
     try {
         $("#lab-max-btn").on("click", loadMaxEntropy);
         $("#lab-max-floor").on("change", loadMaxEntropy);
+        loadModelOptions();
         $("#lab-single-btn").on("click", scoreSingle);
         $("#lab-batch-btn").on("click", scoreBatch);
         $("#lab-batch-csv").on("click", downloadCsv);

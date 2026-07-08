@@ -85,8 +85,10 @@ Interactive view for exploring scores, backed by the entropy_lab REST
 endpoint (same scoring code as the `entropy` command):
 
 1. Maximum possible entropy for a user-supplied floor: -log2(floor).
-2. Single-string scoring against every model in lookups/.
+2. Single-string scoring against a chosen model, or every model in
+   lookups/ when * is selected.
 3. Batch scoring: upload a file with strings one per line (max 200 000),
+   pick a model (* = all models),
    optionally override the floor for this run (empty input = default),
    get per-model summary statistics (min, max, mean, median, std dev,
    p95, counts) above a results table, and download all rows as CSV.
