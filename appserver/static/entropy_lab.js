@@ -115,6 +115,45 @@ require([
         ["median", "Median"], ["stdev", "Std dev"], ["p95", "P95"]
     ];
 
+    var sortCol = null;  // -1 = string column, 0..N-1 = model score columns
+    var sortDir = 1;     // 1 = ascending, -1 = descending
+
+    function sortRows() {
+        if (sortCol === null || !lastBatch) { return; }
+        lastBatch.rows.sort(function (a, b) {
+            if (sortCol === -1) {
+                return sortDir * String(a.string).localeCompare(String(b.string));
+            }
+            var va = a.scores[sortCol];
+            var vb = b.scores[sortCol];
+            var na = (va === null || va === undefined);
+            var nb = (vb === null || vb === undefined);
+            if (na || nb) { return na - nb; }  // empty scores always last
+            return sortDir * (va - vb);
+        });
+    }
+
+    function headerCell(label, colIndex) {
+        var arrow = "";
+        if (sortCol === colIndex) {
+            arrow = sortDir === 1 ? " \u25B2" : " \u25BC";
+        }
+        return $("<th>")
+            .text(label + arrow)
+            .css("cursor", "pointer")
+            .attr("title", "Click to sort")
+            .on("click", function () {
+                if (sortCol === colIndex) {
+                    sortDir = -sortDir;
+                } else {
+                    sortCol = colIndex;
+                    sortDir = 1;
+                }
+                sortRows();
+                renderTable(lastBatch);
+            });
+    }
+
     function renderStats(data) {
         var container = $("#lab-batch-stats").empty();
         data.models.forEach(function (name) {
@@ -139,9 +178,9 @@ require([
     function renderTable(data) {
         var thead = $("#lab-batch-table thead").empty();
         var tbody = $("#lab-batch-table tbody").empty();
-        var hr = $("<tr>").append($("<th>").text("String"));
-        data.models.forEach(function (name) {
-            hr.append($("<th>").text(name));
+        var hr = $("<tr>").append(headerCell("String", -1));
+        data.models.forEach(function (name, i) {
+            hr.append(headerCell(name, i));
         });
         thead.append(hr);
 
@@ -155,10 +194,11 @@ require([
             tbody.append(tr);
         }
         $("#lab-batch-info").removeClass("lab-err").text(
-            data.rows.length > DISPLAY_CAP
+            (data.rows.length > DISPLAY_CAP
                 ? "Showing first " + DISPLAY_CAP + " of " + data.rows.length +
                   " rows. The CSV download contains all rows."
-                : data.rows.length + " rows."
+                : data.rows.length + " rows.") +
+            " Floor used: " + data.floor + "."
         );
     }
 
@@ -181,10 +221,24 @@ require([
                 info.addClass("lab-err").text("File contains no non-empty lines.");
                 return;
             }
+            var body = { strings: strings };
+            var floorRaw = ($("#lab-batch-floor").val() || "").trim();
+            if (floorRaw) {
+                var floorNum = Number(floorRaw);
+                if (!isFinite(floorNum) || floorNum <= 0 || floorNum > 1) {
+                    info.addClass("lab-err").text(
+                        "Floor must be a number in (0, 1], e.g. 1e-8. Leave empty for the default."
+                    );
+                    return;
+                }
+                body.floor = floorNum;
+            }
             info.removeClass("lab-err").text("Scoring " + strings.length + " strings\u2026");
-            post({ action: "score" }, { strings: strings }).done(function (data) {
+            post({ action: "score" }, body).done(function (data) {
                 if (typeof data === "string") { data = JSON.parse(data); }
                 lastBatch = data;
+                sortCol = null;
+                sortDir = 1;
                 renderStats(data);
                 renderTable(data);
                 $("#lab-batch-csv").show();

@@ -37,8 +37,8 @@ except ImportError:  # outside Splunk (unit tests)
 
 import entropy_lib
 
-MAX_STRINGS = 10000
-MAX_BODY_BYTES = 5 * 1024 * 1024
+MAX_STRINGS = 200000
+MAX_BODY_BYTES = 50 * 1024 * 1024
 
 
 def _response(status, body):
@@ -129,7 +129,7 @@ class LabHandler(PersistentServerConnectionApplication):
     def _score(request):
         payload = request.get("payload") or ""
         if len(payload.encode("utf-8", "ignore")) > MAX_BODY_BYTES:
-            return _response(413, {"error": "Request larger than 5 MB"})
+            return _response(413, {"error": "Request larger than 50 MB"})
         try:
             body = json.loads(payload)
         except ValueError:

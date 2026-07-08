@@ -68,9 +68,14 @@
           <input type="file" id="lab-batch-file" accept=".txt,.csv,text/plain,text/csv"/>
         </div>
         <div class="lab-field">
+          <label for="lab-batch-floor">Floor:</label>
+          <input type="text" id="lab-batch-floor" placeholder="default: 1e-7"/>
+          <span class="lab-muted">probability for bigrams unknown to the model; leave empty to use the default</span>
+        </div>
+        <div class="lab-field">
           <button id="lab-batch-btn" class="btn btn-primary">Score file</button>
           <button id="lab-batch-csv" class="btn" style="display:none;">Download results as CSV</button>
-          <span class="lab-muted">up to 10 000 lines; every model in the lookups folder is used</span>
+          <span class="lab-muted">up to 200 000 lines; every model in the lookups folder is used</span>
         </div>
         <div id="lab-batch-stats"></div>
         <div id="lab-batch-info" class="lab-muted"></div>

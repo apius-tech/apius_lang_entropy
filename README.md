@@ -86,7 +86,11 @@ endpoint (same scoring code as the `entropy` command):
 
 1. Maximum possible entropy for a user-supplied floor: -log2(floor).
 2. Single-string scoring against every model in lookups/.
-3. Batch scoring: upload a file with strings one per line (max 10 000),
+3. Batch scoring: upload a file with strings one per line (max 200 000),
+   optionally override the floor for this run (empty input = default),
    get per-model summary statistics (min, max, mean, median, std dev,
    p95, counts) above a results table, and download all rows as CSV.
-   The table displays up to 1 000 rows; the CSV always contains all.
+   Columns are sortable - click a header to sort ascending, click again
+   for descending; empty scores always sort last. The CSV export follows
+   the current sort order. The table displays up to 1 000 rows; the CSV
+   always contains all.
