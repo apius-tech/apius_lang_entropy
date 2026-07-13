@@ -1,0 +1,13 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  pr-gate:
+    # Pinned to @main for now; repin to a v1 tag once splunk-app-ci is released.
+    uses: apius-tech/splunk-app-ci/.github/workflows/app-ci.yml@main
+    with:
+      app_id: apius_lang_entropy
