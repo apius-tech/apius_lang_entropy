@@ -96,3 +96,7 @@ endpoint (same scoring code as the `entropy` command):
    for descending; empty scores always sort last. The CSV export follows
    the current sort order. The table displays up to 1 000 rows; the CSV
    always contains all.
+
+## License
+
+MIT - see [LICENSE](LICENSE). Copyright (c) 2026 Apius Technologies.
