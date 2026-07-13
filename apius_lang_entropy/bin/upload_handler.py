@@ -32,7 +32,6 @@ def _response(status, body):
 
 
 class UploadHandler(PersistentServerConnectionApplication):
-
     def __init__(self, command_line, command_arg):
         super().__init__()
 
@@ -48,10 +47,13 @@ class UploadHandler(PersistentServerConnectionApplication):
         query = dict(request.get("query") or [])
         name = query.get("name", "")
         if not _NAME_RE.match(name):
-            return _response(400, {
-                "error": "Invalid model name. Use 1-64 characters: "
-                         "letters, digits, '_' or '-'."
-            })
+            return _response(
+                400,
+                {
+                    "error": "Invalid model name. Use 1-64 characters: "
+                    "letters, digits, '_' or '-'."
+                },
+            )
 
         payload = request.get("payload") or ""
         if not payload.strip():
@@ -64,31 +66,36 @@ class UploadHandler(PersistentServerConnectionApplication):
         except ValueError as exc:
             return _response(400, {"error": str(exc)})
 
-        filename = "%s_probabilities.csv" % name
+        filename = f"{name}_probabilities.csv"
         out_path = os.path.join(entropy_lib.app_lookups_dir(), filename)
         try:
             os.makedirs(os.path.dirname(out_path), exist_ok=True)
             with open(out_path, "w", encoding="utf-8", newline="") as f:
                 f.write(out_csv)
         except OSError as exc:
-            return _response(500, {"error": "Could not write lookup: %s" % exc})
+            return _response(500, {"error": f"Could not write lookup: {exc}"})
 
         floor_hint = None
         if stats["min_probability"] <= entropy_lib.DEFAULT_FLOOR:
             floor_hint = (
-                "Smallest probability in this model (%.2e) is not above the "
-                "default floor (%.0e). Pass a smaller floor= to the entropy "
-                "command, e.g. floor=%.0e" %
-                (stats["min_probability"], entropy_lib.DEFAULT_FLOOR,
-                 stats["min_probability"] / 10)
+                "Smallest probability in this model ({:.2e}) is not above the "
+                "default floor ({:.0e}). Pass a smaller floor= to the entropy "
+                "command, e.g. floor={:.0e}".format(
+                    stats["min_probability"],
+                    entropy_lib.DEFAULT_FLOOR,
+                    stats["min_probability"] / 10,
+                )
             )
 
-        return _response(200, {
-            "lookup": filename,
-            "bigrams": stats["bigrams"],
-            "contexts": stats["contexts"],
-            "skipped_rows": stats["skipped_rows"],
-            "min_probability": stats["min_probability"],
-            "floor_hint": floor_hint,
-            "example_spl": "| entropy field=your_field lookup=%s" % filename,
-        })
+        return _response(
+            200,
+            {
+                "lookup": filename,
+                "bigrams": stats["bigrams"],
+                "contexts": stats["contexts"],
+                "skipped_rows": stats["skipped_rows"],
+                "min_probability": stats["min_probability"],
+                "floor_hint": floor_hint,
+                "example_spl": f"| entropy field=your_field lookup={filename}",
+            },
+        )

@@ -1,0 +1,18 @@
+# Canonical ruff configuration for Apius Splunk apps.
+# Kept in sync across the fleet via the splunk-app-template repo.
+
+[tool.ruff]
+target-version = "py39"
+line-length = 88
+# Vendored third-party libraries (splunklib, packaging, deprecation) are not ours.
+extend-exclude = ["**/lib/"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+# Splunk entrypoints must extend sys.path to the bundled lib/ before importing
+# splunklib / the app's own modules, so imports legitimately follow code.
+"apius_lang_entropy/bin/entropy_command.py" = ["E402", "I001"]
+"apius_lang_entropy/bin/lab_handler.py" = ["E402", "I001"]
+"apius_lang_entropy/bin/upload_handler.py" = ["E402", "I001"]

@@ -40,7 +40,7 @@ class EntropyCommand(StreamingCommand):
     )
     lookup = Option(
         doc="CSV lookup with bigram probabilities, located in the app's "
-            "lookups directory. Default: polish_bigrams_probabilities.csv",
+        "lookups directory. Default: polish_bigrams_probabilities.csv",
         require=False,
         default="polish_bigrams_probabilities.csv",
     )
@@ -50,8 +50,7 @@ class EntropyCommand(StreamingCommand):
         default="entropy",
     )
     floor = Option(
-        doc="Probability assigned to bigrams missing from the model. "
-            "Default: 1e-7",
+        doc="Probability assigned to bigrams missing from the model. Default: 1e-7",
         require=False,
         default=entropy_lib.DEFAULT_FLOOR,
         validate=validators.Float(minimum=1e-30, maximum=1.0),
@@ -67,9 +66,7 @@ class EntropyCommand(StreamingCommand):
         if cached is None or cached[0] != mtime:
             probs = entropy_lib.load_bigram_probs(path)
             if not probs:
-                raise ValueError(
-                    "Lookup %s contains no usable bigram rows" % self.lookup
-                )
+                raise ValueError(f"Lookup {self.lookup} contains no usable bigram rows")
             self._models[path] = (mtime, probs)
         return self._models[path][1]
 
@@ -85,8 +82,7 @@ class EntropyCommand(StreamingCommand):
             value = record.get(self.field)
             if isinstance(value, list):  # multivalue field: score each
                 record[self.output] = [
-                    _fmt(entropy_lib.cross_entropy(v, probs, floor))
-                    for v in value
+                    _fmt(entropy_lib.cross_entropy(v, probs, floor)) for v in value
                 ]
             else:
                 record[self.output] = _fmt(

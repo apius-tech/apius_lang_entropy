@@ -25,9 +25,7 @@ _SAFE_NAME_RE = re.compile(r"^[A-Za-z0-9_.\-]+$")
 
 def app_lookups_dir():
     """Absolute path to this app's lookups directory."""
-    return os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "..", "lookups")
-    )
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "lookups"))
 
 
 def list_lookup_files():
@@ -36,7 +34,8 @@ def list_lookup_files():
     if not os.path.isdir(directory):
         return []
     return sorted(
-        name for name in os.listdir(directory)
+        name
+        for name in os.listdir(directory)
         if name.lower().endswith(".csv")
         and _SAFE_NAME_RE.match(name)
         and os.path.isfile(os.path.join(directory, name))
@@ -50,12 +49,11 @@ def resolve_lookup_path(lookup_name):
     """
     if not _SAFE_NAME_RE.match(lookup_name or ""):
         raise ValueError(
-            "Invalid lookup name %r (letters, digits, '_', '-', '.' only)"
-            % lookup_name
+            f"Invalid lookup name {lookup_name!r} (letters, digits, '_', '-', '.' only)"
         )
     path = os.path.join(app_lookups_dir(), lookup_name)
     if not os.path.isfile(path):
-        raise FileNotFoundError("Lookup file not found: %s" % path)
+        raise FileNotFoundError(f"Lookup file not found: {path}")
     return path
 
 
@@ -71,7 +69,7 @@ def load_bigram_probs(path):
     lowercased so lookups stay consistent with normalize().
     """
     probs = {}
-    with open(path, "r", encoding="utf-8", newline="") as f:
+    with open(path, encoding="utf-8", newline="") as f:
         reader = csv.reader(f)
         next(reader, None)  # header
         for row in reader:

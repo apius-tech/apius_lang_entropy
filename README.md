@@ -1,4 +1,4 @@
-# Language Entropy (lang_entropy)
+# Language Entropy (apius_lang_entropy)
 
 Bigram cross-entropy scoring of strings against a language model.
 Built for hunting DGA / C2 domains and other random-looking strings
@@ -16,7 +16,7 @@ High score = string looks random (does not fit the bigram model).
 
 ## Install
 
-1. Copy the `lang_entropy/` directory to `$SPLUNK_HOME/etc/apps/`
+1. Copy the `apius_lang_entropy/` directory to `$SPLUNK_HOME/etc/apps/`
    (or install the packaged `.tar.gz` via Manage Apps > Install app from file).
 2. Restart Splunk.
 3. Open the app, go to the "Upload bigram model" page and upload your
