@@ -71,8 +71,12 @@ def _stats(scores, too_short):
         "count": len(scores) + too_short,
         "scored": len(scores),
         "too_short": too_short,
-        "min": None, "max": None, "mean": None,
-        "median": None, "stdev": None, "p95": None,
+        "min": None,
+        "max": None,
+        "mean": None,
+        "median": None,
+        "stdev": None,
+        "p95": None,
     }
     if not scores:
         return out
@@ -87,7 +91,6 @@ def _stats(scores, too_short):
 
 
 class LabHandler(PersistentServerConnectionApplication):
-
     def __init__(self, command_line=None, command_arg=None):
         if PersistentServerConnectionApplication is not object:
             super().__init__()
@@ -108,10 +111,13 @@ class LabHandler(PersistentServerConnectionApplication):
             return self._maxentropy(query)
         if action == "score" and method == "POST":
             return self._score(request)
-        return _response(400, {
-            "error": "Unknown action. Use GET action=models, "
-                     "GET action=maxentropy or POST action=score."
-        })
+        return _response(
+            400,
+            {
+                "error": "Unknown action. Use GET action=models, "
+                "GET action=maxentropy or POST action=score."
+            },
+        )
 
     @staticmethod
     def _models():
@@ -120,10 +126,13 @@ class LabHandler(PersistentServerConnectionApplication):
     @staticmethod
     def _maxentropy(query):
         floor = _parse_floor(query.get("floor"))
-        return _response(200, {
-            "floor": floor,
-            "max_entropy_bits": _max_entropy(2, floor),
-        })
+        return _response(
+            200,
+            {
+                "floor": floor,
+                "max_entropy_bits": _max_entropy(2, floor),
+            },
+        )
 
     @staticmethod
     def _score(request):
@@ -139,18 +148,21 @@ class LabHandler(PersistentServerConnectionApplication):
         if not isinstance(strings, list) or not strings:
             return _response(400, {"error": "Provide a non-empty 'strings' list"})
         if len(strings) > MAX_STRINGS:
-            return _response(400, {
-                "error": "Too many strings (%d). Limit: %d"
-                         % (len(strings), MAX_STRINGS)
-            })
+            return _response(
+                400,
+                {"error": f"Too many strings ({len(strings)}). Limit: {MAX_STRINGS}"},
+            )
         strings = [str(s) for s in strings]
 
         lookups = body.get("lookups") or entropy_lib.list_lookup_files()
         if not lookups:
-            return _response(400, {
-                "error": "No probability lookups found. Upload a model "
-                         "on the 'Upload bigram model' page first."
-            })
+            return _response(
+                400,
+                {
+                    "error": "No probability lookups found. Upload a model "
+                    "on the 'Upload bigram model' page first."
+                },
+            )
 
         floor = _parse_floor(body.get("floor"))
 
@@ -162,9 +174,9 @@ class LabHandler(PersistentServerConnectionApplication):
                 return _response(400, {"error": str(exc)})
             probs = entropy_lib.load_bigram_probs(path)
             if not probs:
-                return _response(400, {
-                    "error": "Lookup %s contains no usable rows" % name
-                })
+                return _response(
+                    400, {"error": f"Lookup {name} contains no usable rows"}
+                )
             models[str(name)] = probs
 
         model_names = list(models)
@@ -189,9 +201,12 @@ class LabHandler(PersistentServerConnectionApplication):
             name: _stats(per_model_scores[name], per_model_too_short[name])
             for name in model_names
         }
-        return _response(200, {
-            "models": model_names,
-            "floor": floor,
-            "rows": rows,
-            "stats": stats,
-        })
+        return _response(
+            200,
+            {
+                "models": model_names,
+                "floor": floor,
+                "rows": rows,
+                "stats": stats,
+            },
+        )
