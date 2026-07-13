@@ -1,0 +1,11 @@
+# Local design/planning docs — kept out of this public repo, mirrored privately.
+/CONTEXT.md
+/docs/adr/
+/.scratch/
+
+# Tooling artifacts
+/.codesight/
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
