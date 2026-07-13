@@ -6,8 +6,8 @@ authors = [
 ]
 license = "MIT"
 requires-python = ">=3.9"
-# The shipped app version lives in app.conf [launcher] version and is stamped
-# from the git release tag by CI (ADR-0004); this table is repo metadata only.
+# Version is kept in sync with the git release tag by CI, alongside
+# app.conf [launcher] version (ADR-0004). "0.0.0" is the unreleased placeholder.
 version = "0.0.0"
 
 # Canonical ruff configuration for Apius Splunk apps.
