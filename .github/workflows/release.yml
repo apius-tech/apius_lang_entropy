@@ -1,0 +1,31 @@
+name: release
+
+# Caller for the shared release/publish workflow (ADR-0004 / ADR-0005).
+# Triggered by pushing a vX.Y.Z tag (on the merged "Release vX.Y.Z" commit).
+# Packages the app at the tag version, runs AppInspect (base blocking, cloud
+# advisory by default), and publishes a GitHub Release. Splunkbase upload is
+# out of scope (slice #6).
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  # Derive the release version by stripping the leading "v" from the tag name
+  # (e.g. v1.2.3 -> 1.2.3); GitHub expressions can't do this inline.
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.strip.outputs.version }}
+    steps:
+      - id: strip
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+  release:
+    needs: version
+    # Pinned to @main for now; repin to a released tag (e.g. @v1) once one is cut.
+    uses: apius-tech/splunk-app-ci/.github/workflows/release.yml@main
+    with:
+      app_id: apius_lang_entropy
+      version: ${{ needs.version.outputs.version }}
+    secrets: inherit

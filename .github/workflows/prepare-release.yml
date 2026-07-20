@@ -1,0 +1,24 @@
+name: prepare-release
+
+# Caller for the shared prepare-release workflow (ADR-0004 commit-back flow).
+# A maintainer dispatches this with the target version; it opens a
+# "Release vX.Y.Z" PR that stamps app.conf + pyproject.toml to that version.
+# Merge the PR, then push the tag vX.Y.Z to trigger release.yml.
+#
+# Note: workflow_dispatch is only available once this file exists on the
+# default branch (main).
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version X.Y.Z (no leading v)."
+        required: true
+        type: string
+
+jobs:
+  prepare-release:
+    # Pinned to @main for now; repin to a released tag (e.g. @v1) once one is cut.
+    uses: apius-tech/splunk-app-ci/.github/workflows/prepare-release.yml@main
+    with:
+      version: ${{ inputs.version }}
+      app_id: apius_lang_entropy
