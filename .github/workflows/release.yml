@@ -1,10 +1,15 @@
 name: release
 
-# Caller for the shared release/publish workflow (ADR-0004 / ADR-0005).
+# Caller for the shared release/publish workflow (ADR-0004 / ADR-0005 / ADR-0006).
 # Triggered by pushing a vX.Y.Z tag (on the merged "Release vX.Y.Z" commit).
 # Packages the app at the tag version, runs AppInspect (base blocking, cloud
-# advisory by default), and publishes a GitHub Release. Splunkbase upload is
-# out of scope (slice #6).
+# advisory by default), publishes a GitHub Release, and then publishes to
+# Splunkbase behind the `splunkbase` Environment approval gate (slice #6).
+#
+# splunkbase_app_id comes from the SPLUNKBASE_APP_ID repo variable; when it is
+# unset the shared workflow skips the Splunkbase publish (first publish is
+# manual). SPLUNK_USER/SPLUNK_PASS reach the reusable workflow via
+# `secrets: inherit` and are scoped to the `splunkbase` Environment for publish.
 on:
   push:
     tags:
@@ -33,4 +38,8 @@ jobs:
     with:
       app_id: apius_lang_entropy
       version: ${{ needs.version.outputs.version }}
+      # Splunkbase listing id (repo variable). Empty -> Splunkbase publish is
+      # skipped by the reusable workflow; the manual approval gate lives in the
+      # `splunkbase` Environment.
+      splunkbase_app_id: ${{ vars.SPLUNKBASE_APP_ID }}
     secrets: inherit
