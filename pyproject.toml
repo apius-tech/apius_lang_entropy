@@ -8,7 +8,7 @@ license = "MIT"
 requires-python = ">=3.9"
 # Version is kept in sync with the git release tag by CI, alongside
 # app.conf [launcher] version (ADR-0004). "0.0.0" is the unreleased placeholder.
-version = "1.0.1"
+version = "1.0.2"
 
 # Canonical ruff configuration for Apius Splunk apps.
 # Kept in sync across the fleet via the splunk-app-template repo.
