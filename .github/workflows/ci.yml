@@ -9,6 +9,6 @@ jobs:
   pr-gate:
     # TEMP: pinned to @fix-appinspect-package to test the AppInspect fix (PR
     # apius-tech/splunk-app-ci#1). Set back to @main once that PR is merged.
-    uses: apius-tech/splunk-app-ci/.github/workflows/app-ci.yml@fix-appinspect-package
+    uses: apius-tech/splunk-app-ci/.github/workflows/app-ci.yml@main
     with:
       app_id: apius_lang_entropy
