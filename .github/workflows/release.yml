@@ -38,6 +38,10 @@ jobs:
     with:
       app_id: apius_lang_entropy
       version: ${{ needs.version.outputs.version }}
+      # Splunk versions this app supports (declared on the Splunkbase release).
+      # Floor is 9.2 — the app uses statistics.fmean/quantiles (Python 3.8+),
+      # and 9.0/9.1 ship Python 3.7. 10.2+ is enabled by python.required.
+      splunk_versions: "9.2,9.3,9.4,10.0,10.1,10.2,10.3,10.4,10.5"
       # Splunkbase listing id (repo variable). Empty -> Splunkbase publish is
       # skipped by the reusable workflow; the manual approval gate lives in the
       # `splunkbase` Environment.
