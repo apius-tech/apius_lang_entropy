@@ -17,6 +17,12 @@ on:
 
 jobs:
   prepare-release:
+    # Explicit token grant: the repo default is read-only, and a reusable
+    # workflow cannot exceed the caller's grant. prepare-release.yml opens a
+    # version-bump PR, which needs contents: write + pull-requests: write.
+    permissions:
+      contents: write
+      pull-requests: write
     # Pinned to @main for now; repin to a released tag (e.g. @v1) once one is cut.
     uses: apius-tech/splunk-app-ci/.github/workflows/prepare-release.yml@main
     with:
