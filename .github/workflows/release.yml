@@ -23,6 +23,11 @@ jobs:
 
   release:
     needs: version
+    # Explicit token grant: the repo default is read-only, and a reusable
+    # workflow cannot exceed the caller's grant. release.yml creates a GitHub
+    # Release, which needs contents: write.
+    permissions:
+      contents: write
     # Pinned to @main for now; repin to a released tag (e.g. @v1) once one is cut.
     uses: apius-tech/splunk-app-ci/.github/workflows/release.yml@main
     with:
